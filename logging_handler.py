@@ -23,7 +23,6 @@ class logInline:
 
     def __call__(self, *args):
         chat_id = args[0].effective_chat.id
-        chat_message = args[0].effective_message.text
-        msg = "chat_id: {} || function: {}".format(chat_id, self._f.__name__)
+        msg = "chat_id: {} || user_name: {} || function: {}".format(chat_id, args[0].effective_user.username, self._f.__name__)
         print("{} : {}".format(datetime.today(), msg))
         return self._f(*args)

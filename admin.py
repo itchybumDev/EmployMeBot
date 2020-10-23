@@ -2,20 +2,45 @@ import csv
 import pickle
 
 from model.Job import Job
+from model.Seeker import Seeker
 from model.User import User
 
 user_dict = {}
 dev_team = []
 job_dict = {}
+seeker_dict = {}
+
 
 def loadDataOnStartup():
     loadUserDict()
     loadDevTeam()
     loadJobDict()
+    loadSeekerDict()
 
+
+def isAdmin(chatId):
+    return str(chatId) in dev_team
+
+def getSeeker(chatId):
+    return seeker_dict.get(int(chatId))
+
+def getSeekerDict():
+    return seeker_dict
 
 def getJobDict():
     return job_dict
+
+def getJob(id) -> Job:
+    return job_dict.get(id)
+
+def getUserDict():
+    return user_dict
+
+def getUser(chatId) -> User:
+    return user_dict.get(chatId)
+
+def isSeekerRegistered(chatId):
+    return chatId in seeker_dict.keys()
 
 
 def addNewJob(job : Job):
@@ -61,13 +86,6 @@ def loadJobDict():
         print("Job Dict data is not found, initialize to empty")
 
 
-def getJobDict():
-    return job_dict
-
-def getUserDict():
-    return user_dict
-
-
 def addUser(user : User):
     print("Attempt to add new user")
     if user.id in user_dict:
@@ -99,6 +117,41 @@ def loadUserDict():
             user_dict = pickle.load(handle)
     except IOError:
         print("User Dict data is not found, initialize to empty")
+
+
+def addSeeker(seeker : Seeker):
+    print("Attempt to add new job seeker")
+    if seeker.id in seeker_dict:
+        print('Job Seeker is already in the database')
+        return seeker_dict.get(seeker.id)
+    else:
+        print('New Job Seeker added')
+        seeker_dict.setdefault(seeker.id, seeker)
+        saveSeekerDict()
+        return seeker
+
+
+def saveSeekerDict():
+    global seeker_dict
+    with open("./db/seekerData.pickle", 'wb') as handle:
+        pickle.dump(seeker_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    with open("./db/seekerData.csv", 'w', newline='') as file:
+        fieldnames = Seeker.getFields_name()
+        writer = csv.DictWriter(file, delimiter=';', fieldnames=fieldnames)
+        writer.writeheader()
+        for v in seeker_dict.values():
+            writer.writerow(v.toExcelRow())
+    return True
+
+
+def loadSeekerDict():
+    global seeker_dict
+    try:
+        with open('./db/seekerData.pickle', 'rb') as handle:
+            seeker_dict = pickle.load(handle)
+    except IOError:
+        print("Seeker dict data is not found, initialize to empty")
 
 
 def loadDevTeam():

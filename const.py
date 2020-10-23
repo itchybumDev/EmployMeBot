@@ -19,7 +19,7 @@ Press 'New Job' below to begin posting a new assignment!
 """
 
 NEW_JOB_TEXT = """
-Please send me your posting in the format below, replace everything in side the brackets []
+Please send me your posting in the format below, by insert in those places
 
 Subject : [Insert subject]
 Level : [Insert level]
@@ -33,13 +33,13 @@ For Example:
 """
 
 NEW_JOB_TEXT_SAMPLE = """
-Subject : [H2 Chemistry]
-Level : [JC2]
-Location : [Bukit Timah Hill]
-Time : [Monday, Tuesday, Friday]
-Frequency : [Twice a week]
-Rate : [$50]
-Additional Note : [N/A]
+*Subject* : [H2 Chemistry]
+*Level* : [JC2]
+*Location* : [Bukit Timah Hill]
+*Time* : [Monday, Tuesday, Friday]
+*Frequency* : [Twice a week]
+*Rate* : [$100]
+*Additional Note* : [N/A]
 """
 
 DONE_UPDATING_JOB_TEXT = """
@@ -116,9 +116,170 @@ You have *closed* the job:
 If you wish to start a new assignment posting for another subject, press /start anytime!
 """
 
+PUBLISH_JOB_TEXT = """
+You have *PUBLISHED* the job:
+{}
+
+If you wish to start a new assignment posting for another subject, press /start anytime!
+"""
+
+
+PUBLISH_JOB_POSTER_TEXT = """
+*Congratuations*, your job posting:
+{}
+
+Have been *APPROVED* by admin, you will now see the posting in channel
+
+If you wish to start a new assignment posting for another subject, press /start anytime!
+"""
+
+REJECT_JOB_TEXT = """
+You have *REJECTED* the job:
+{}
+
+Please type in the reason and job poster will be notified to make changes.
+"""
+
+REJECT_JOB_POSTER_TEXT = """
+{}
+
+has been *REJECTED* by the admin. Here is the reason:
+
+_{}_
+
+Please edit the post again for approval, press /start again!
+"""
+
 
 QUIT_TEXT = """
 Thanks for using me
 
 If you wish to start a new assignment posting for another subject, press /start anytime!
+"""
+
+JOB_POSTED_EMPTY_TEXT = """
+All jobs are ready, you do not have pending"""
+
+TUTOR_TEXT = """
+*Hey {}*!
+
+I am Emily and I will help you find a job!
+
+Please do not share any private information 
+specific location with me as your profile will be sent directly to the job posters (parents, students, agents).
+
+At the current moment, here are the list of tuition jobs that are still OPENED.
+Please select the Assignment Code you want to apply to:
+"""
+
+TUTOR_EMPTY_TEXT = """
+*Hey {}*!
+
+I am Emily and I will help you find a job!
+
+There is currently no job at the moment.
+
+Please try /start again later.
+"""
+
+SEEKER_NOT_REGISTERED_TEXT = """
+*Hey {}*!
+
+Seems like you have no profile yet. Let make you one!
+
+Please send me your information by replacing those insert places:
+*Name* : [Insert name]
+*Gender* : [Insert Male/Female]
+*Education Level* : [Insert High School/ Bachelor/ Master/ PhD]
+*Occupation* : [Insert Engineer/ Doctor/ etc]
+*Experience* : [Insert graduate/ 2 yrs/ etc]
+*Additional Note* : [Insert N/A]
+
+For example, something like this:
+
+"""
+
+NEW_SEEKER_INFO_TEXT_SAMPLE = """
+*Name* : [Emily]
+*Gender* : [Female]
+*Education Level* : [AI Bot]
+*Occupation* : [Personal Assistant]
+*Experience* : [2 yrs]
+*Additional Note* : [I am not really a real person]
+"""
+
+DONE_SEEKER_INFO_TEXT = """
+Congratulations! You got a profile!
+Now you can feel free to browse jobs
+"""
+
+REGISTERING_JOB_TEXT = """
+You have chosen job:
+
+{}
+
+Would you like to apply with your current profile?
+
+{} 
+"""
+
+SEEKER_SUBMIT_INTEREST_TEXT = """
+*Well done*!
+
+You have submitted your interest in the job
+{}
+
+Please wait for the owner to contact you
+
+"""
+
+SEEKER_SUBMIT_INTEREST_POSTER_NOTIFY_TEXT = """
+{}
+
+has expressed interest in your posting:
+
+{}
+
+Please view your posted jobs to give the hiring decision
+"""
+
+CHOOSING_SEEKER_TEXT = """
+Application from 
+
+{}
+
+What do you want to do?
+"""
+
+ACCEPT_TEXT = """
+Congratulations on finding the person for the job.
+Your posting is now moved to Closed and will not be able to modify further
+We will notify him/her
+Please proceed to contact him/her to arrange for a call as well
+"""
+ACCEPT_NOTIFICATION_TEXT = """
+You application for
+
+{}
+
+has been *ACCEPTED*'.
+
+Please wait for the job poster to contact you
+"""
+
+REJECT_TEXT = """
+We will notify him/her about your decision
+
+Dont give up!
+Lets keep looking.
+"""
+
+REJECT_NOTIFICATION_TEXT = """
+You application for
+
+{}
+
+has been *REJECTED*
+Dont give up!
+Lets keep looking.
 """
