@@ -8,6 +8,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import MessageHandler, Filters
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ConversationHandler
 from telegram.ext.dispatcher import run_async
+from telegram.utils import helpers
 
 import admin as ad
 from const import *
@@ -51,6 +52,10 @@ def unknown(update, context):
 @logInline
 @run_async
 def start(update, context):
+    payload = context.args
+    if len(payload) != 0:
+        return startFromChannel(update, context, payload)
+
     currUser = User(update.effective_user.first_name,
                     update.effective_user.full_name,
                     update.effective_user.id,
@@ -73,6 +78,26 @@ def start(update, context):
     )
     # Tell ConversationHandler that we're in state `FIRST` now
     return FIRST
+
+
+@logInline
+def startFromChannel(update, context, payload):
+    jobId = payload[0].replace('from-channel-', '')
+
+    if not ad.isJobAvailableForTaking(jobId):
+        context.bot.send_message(update.effective_chat.id,
+                                 text=JOB_NO_LONGER_THERE,
+                                 parse_mode=telegram.ParseMode.MARKDOWN)
+        return ConversationHandler.END
+
+    keyboard = [[InlineKeyboardButton(str(jobId), callback_data=str(jobId))],
+                [InlineKeyboardButton("Quit", callback_data=str('quit'))]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    context.bot.send_message(update.effective_chat.id,
+                             text=START_FROM_CHANNEL_TEXT.format(update.effective_user.full_name, ad.getJob(jobId).toPostingString()),
+                             parse_mode=telegram.ParseMode.MARKDOWN,
+                             reply_markup=reply_markup)
+    return REGISTERING_JOB
 
 
 @logInline
@@ -170,7 +195,7 @@ def chosingEditOrClose(update, context):
 
     if selection not in ad.getJobDict():
         send_edit_text(query,
-                       text='The job is no longer there. Press /start to try again')
+                       text=JOB_NO_LONGER_THERE)
         return ConversationHandler.END
 
     curr_job = ad.getJobDict().get(selection)
@@ -325,7 +350,23 @@ def publishPosting(update, context):
     context.bot.send_message(currJob.created_by,
                              text=PUBLISH_JOB_POSTER_TEXT.format(currJob.toPostingString()),
                              parse_mode=telegram.ParseMode.MARKDOWN)
+
+    publishToChannel(currJob, context)
     return ConversationHandler.END
+
+
+def publishToChannel(currJob : Job, context):
+    jobId = currJob.id
+    url = helpers.create_deep_linked_url(context.bot.get_me().username, ''+str(jobId))
+    keyboard = [
+        [InlineKeyboardButton("Register for job", url=url)],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    for c in channel:
+        context.bot.send_message(c,
+                             text=CHANNEL_NEW_JOB_POSTED_TEXT.format(currJob.toPostingString()),
+                             parse_mode=telegram.ParseMode.MARKDOWN,
+                             reply_markup=reply_markup)
 
 
 @logInline
@@ -524,7 +565,7 @@ def jobPosted(update, context):
     closedList = []
 
     for value in ad.getJobDict().values():
-        if value.created_by == chatId:
+        if value.created_by == chatId or ad.isAdmin(chatId):
             if value.stage == Job.stages[0]:
                 pendingList.append(value.id)
             elif value.stage == Job.stages[1]:
@@ -697,14 +738,14 @@ def registeringJob(update, context):
 
     if selection not in ad.getJobDict():
         send_edit_text(query,
-                       text='The job is no longer there. Press /start to try again')
+                       text=JOB_NO_LONGER_THERE)
         return ConversationHandler.END
 
     curr_job = ad.getJobDict().get(selection)
 
     if not curr_job.isPublish():
         send_edit_text(query,
-                       text='The job is no longer there. Press /start to try again')
+                       text=JOB_NO_LONGER_THERE)
         return ConversationHandler.END
 
     # Check if seeker profile is already there
@@ -731,14 +772,14 @@ def submitJobInterest(update, context):
     seeker = ad.getSeeker(update.effective_chat.id)
     if selection not in ad.getJobDict():
         send_edit_text(query,
-                       text='The job is no longer there. Press /start to try again')
+                       text=JOB_NO_LONGER_THERE)
         return ConversationHandler.END
 
     curr_job = ad.getJob(selection)
 
     if not curr_job.isPublish():
         send_edit_text(query,
-                       text='The job is no longer there. Press /start to try again')
+                       text=JOB_NO_LONGER_THERE)
         return ConversationHandler.END
 
     curr_job.setInterestedUser(seeker)
@@ -854,8 +895,9 @@ def main():
     ad.loadDataOnStartup()
 
     # Second State is New Job, Posted Job,
+
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start),
+        entry_points=[CommandHandler('start', start, pass_args=True),
                       CommandHandler('start_admin', start_admin)],
         states={
             FIRST: [CallbackQueryHandler(postingJob, pattern='^poster$'),

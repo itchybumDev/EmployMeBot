@@ -4,7 +4,20 @@ Welcome to your personal Job Assitant Bot!
 
 I am Emily and I am here to assist you.
 
-Before we start, please join our Telegram channel ChanelName if you are not yet a member!
+Before we start, please join our Telegram channel @tuitionbotsg if you are not yet a member!
+
+Important Notice: If you do not have a Telegram Username and have disabled forwarded messages to contain your Telegram contact in your Privacy Settings, Job Posters or Tutors will not be able to contact you on Telegram. We advise you to create a Telegram username before proceeding further steps!
+
+"""
+
+START_FROM_CHANNEL_TEXT = """
+*Hello {}*, 
+Welcome to your personal Job Assitant Bot!
+
+I am Emily and I am here to assist you.
+
+You have chosen to apply for job
+{}
 
 Important Notice: If you do not have a Telegram Username and have disabled forwarded messages to contain your Telegram contact in your Privacy Settings, Job Posters or Tutors will not be able to contact you on Telegram. We advise you to create a Telegram username before proceeding further steps!
 
@@ -47,7 +60,7 @@ DONE_UPDATING_JOB_TEXT = """
 
 What will happen next:
 
-Once approved by the Administrators, your job request will be published on ChanelName.
+Once approved by the Administrators, your job request will be published on @tuitionbotsg.
 
 Sit tight and be patient! Once any tutor applies for your job, his/her profile will be sent to you by me (the bot) directly.
 
@@ -63,7 +76,7 @@ DONE_POSTING_JOB_TEXT = """
 
 What will happen next:
 
-Once approved by the Administrators, your job request will be published on ChanelName.
+Once approved by the Administrators, your job request will be published on @tuitionbotsg.
 
 Sit tight and be patient! Once any tutor applies for your job, his/her profile will be sent to you by me (the bot) directly.
 
@@ -131,6 +144,13 @@ PUBLISH_JOB_POSTER_TEXT = """
 Have been *APPROVED* by admin, you will now see the posting in channel
 
 If you wish to start a new assignment posting for another subject, press /start anytime!
+"""
+
+CHANNEL_NEW_JOB_POSTED_TEXT = """
+*NEW JOB POSTING*
+
+{}
+
 """
 
 REJECT_JOB_TEXT = """
@@ -283,3 +303,5 @@ has been *REJECTED*
 Dont give up!
 Lets keep looking.
 """
+
+JOB_NO_LONGER_THERE = 'The job is no longer there. Press /start to try again'

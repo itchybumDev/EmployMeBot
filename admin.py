@@ -43,6 +43,10 @@ def isSeekerRegistered(chatId):
     return chatId in seeker_dict.keys()
 
 
+def isJobAvailableForTaking(jobId):
+    return jobId in job_dict.keys() and job_dict.get(jobId).isPublish()
+
+
 def addNewJob(job : Job):
     print("Attempt to add new job")
     if job.id in job_dict:
