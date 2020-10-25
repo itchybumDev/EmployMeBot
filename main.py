@@ -28,6 +28,10 @@ FIRST, POSTING, REGISTERING_JOB, ADD_SEEKER, SUBMIT_JOB_INTEREST, CHOOSING_SEEKE
 UPDATE_STAGE, REJECTION_REASON, NOTIFY_DECISION = range(12)
 
 
+#TuitionBotSg
+channel = [-1001215957440]
+
+
 class authorize:
     def __init__(self, f):
         self._f = f
