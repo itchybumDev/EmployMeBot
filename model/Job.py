@@ -145,4 +145,3 @@ class Job:
                 'rejected_reason': self.rejected_reason if self.rejected_reason != None else 'None',
                 'assignedUser': self.assignedUser.toString() if self.assignedUser != None else 'None',
                 'interestedUser': interestedUserString}
-g

@@ -41,7 +41,7 @@ class authorize:
 
 @run_async
 def unknown(update, context):
-    send_plain_text(update, context, "Sorry, I didn't understand that command.\nRun /help to see available options")
+    send_plain_text(update, context, "Sorry, I didn't understand that command.\nRun /start to see available options")
 
 
 @logInline
@@ -375,7 +375,6 @@ def updateJob(update, context):
 
 @logInline
 def reSubmitEditJob(update, context):
-    print('reSubmitEditJob')
     query = update.callback_query
     query.answer()
     if context.user_data['editJob'] in ad.getJobDict():
@@ -390,7 +389,6 @@ def reSubmitEditJob(update, context):
 
 @logInline
 def doneUpdatingJob(update, context):
-    print('doneUpdatingJob')
     query = update.callback_query
     query.answer()
     query.edit_message_text(
@@ -467,7 +465,7 @@ def createSeeker(info, chatId) -> Job:
 
 
 def createJob(inputJob, created_by) -> Job:
-    if Job.getTerms[0] in inputJob:
+    if Job.getTerms()[0] in inputJob:
         terms = Job.getTerms()
     else:
         terms = Job.getBoldTerms()
@@ -610,7 +608,6 @@ def addSeeker(update, context):
         notifyAdmin("Something went wrong in added new job seeker {}".format(info), context)
         return ADD_SEEKER
 
-    print('New Seeker created \n' + new_seeker.toString())
     context.user_data['jobSeekerInfo'] = new_seeker
 
     keyboard = [
@@ -630,12 +627,24 @@ def addSeeker(update, context):
 def donePostingInfo(update, context):
     query = update.callback_query
     query.answer()
-    send_plain_text(update, context, DONE_SEEKER_INFO_TEXT)
-
+    send_edit_text(query, DONE_SEEKER_INFO_TEXT)
     ad.addSeeker(context.user_data['jobSeekerInfo'])
+
+    keyboard = [
+        [InlineKeyboardButton("Tutor", callback_data=str('tutor'))],
+        [InlineKeyboardButton("Quit", callback_data=str('quit'))]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    # Send message with text and appended InlineKeyboard
+    update.message.reply_text(
+        DONE_SEEKER_INFO_TEXT,
+        parse_mode=ParseMode.MARKDOWN,
+        reply_markup=reply_markup
+    )
+
     notifyAdmin(text='*New Job Seeker added*:\n' + context.user_data['jobSeekerInfo'].toPostingString(),
                 context=context)
-    return REGISTERING_JOB
+    return FIRST
 
 
 @logInline
@@ -644,8 +653,14 @@ def resubmitInfo(update, context):
     query.answer()
     keyboard = [[InlineKeyboardButton('Quit', callback_data=str('quit'))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
+
+    name = update.effective_user.full_name or\
+           update.effective_user.name or\
+           update.effective_user.first_name or\
+           update.effective_user.last_name
+
     query.edit_message_text(text='Here is the sample\n\n' +
-                                 NEW_SEEKER_INFO_TEXT_SAMPLE +
+                                 NEW_SEEKER_INFO_TEXT_SAMPLE.format(name) +
                                  '\nPlease submit the information again',
                             parse_mode=telegram.ParseMode.MARKDOWN,
                             reply_markup=reply_markup)
@@ -661,12 +676,17 @@ def registeringJob(update, context):
 
     chatId = update.effective_user.id
 
+    name = update.effective_user.full_name or \
+           update.effective_user.name or \
+           update.effective_user.first_name or \
+           update.effective_user.last_name
+
     if not ad.isSeekerRegistered(chatId):
         send_plain_text(update, context, SEEKER_NOT_REGISTERED_TEXT.format(update.effective_user.full_name))
         keyboard = [[InlineKeyboardButton('Quit', callback_data=str('quit'))]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         context.bot.send_message(update.effective_chat.id,
-                                 text=NEW_SEEKER_INFO_TEXT_SAMPLE,
+                                 text=NEW_SEEKER_INFO_TEXT_SAMPLE.format(name),
                                  parse_mode=telegram.ParseMode.MARKDOWN,
                                  reply_markup=reply_markup)
         return ADD_SEEKER
@@ -740,28 +760,15 @@ def addDev(update, context):
 @run_async
 def help_me(update, context):
     HELP_TEXT = """--<i>Here is a list of commands</i>--
+/canIBeAdmin
 
-/hi
-Register the group after added bot to group
+/downloadAll
 
-/activate
-Start sending after the bot reset
+/addAdmin [id]
 
-/show
-Show all Groups that the bot is active
+/help
 
-/update [chatId] [frequency in seconds] [message]
-Update the message sending to the group
-*b -- *bBold*b
-*i -- *iItalic*i
-*n -- newline
-
-/delete [chatId]
-Delete the group from the bot
-
-/iamadmin
-Add admin
-    """
+"""
     context.bot.send_message(update.effective_chat.id, text=HELP_TEXT, parse_mode=telegram.ParseMode.HTML)
 
 
@@ -801,6 +808,32 @@ def send_plain_text(update, context, text):
 
 def send_html_text(update, context, text):
     context.bot.send_message(update.effective_chat.id, text=text, parse_mode=telegram.ParseMode.HTML)
+
+
+@authorize
+@run_async
+def download_all(update, context):
+    with open("./db/jobData.csv", 'rb') as f:
+        context.bot.send_document(chat_id=update.effective_chat.id, document=f, filename='jobData.csv')
+    with open("./db/seekerData.csv", 'rb') as f:
+        context.bot.send_document(chat_id=update.effective_chat.id, document=f, filename='seekerData.csv')
+    with open("./db/userData.csv", 'rb') as f:
+        context.bot.send_document(chat_id=update.effective_chat.id, document=f, filename='userData.csv')
+    # with open("./db/userData.pickle", 'rb') as f:
+    #     context.bot.send_document(chat_id=update.effective_chat.id, document=f, filename='userData.pickle')
+
+@authorize
+@run_async
+def canIBeAdmin(update, context):
+    user = ad.getUser(update.effective_user.id)
+    notifyAdmin(user.toString() + " want to admin", context)
+
+@authorize
+@run_async
+def addAdmin(update, context):
+    newAdminId = context.args[0]
+    ad.addDevTeam(newAdminId)
+    send_plain_text(update, context,"Added Dev: {}".format(ad.getUser(newAdminId)))
 
 
 def main():
@@ -860,6 +893,9 @@ def main():
     dp.add_handler(conv_handler)
 
     admin_commands = [
+        ['canIBeAdmin', canIBeAdmin],
+        ['downloadAll', download_all],
+        ['addAdmin', addAdmin],
         ["help", help_me],
     ]
     #
