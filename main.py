@@ -836,6 +836,12 @@ def addAdmin(update, context):
     send_plain_text(update, context,"Added Dev: {}".format(ad.getUser(newAdminId)))
 
 
+@run_async
+def hi(update, context):
+    print("new channel added bot {}".format(update.effective_chat.id))
+    notifyAdmin("Channel {} added bot".format(update.effective_chat.id), context)
+
+
 def main():
     # ad.startAdmin()
     updater = Updater(config['telegram']['token_dev'], use_context=True)
@@ -897,6 +903,7 @@ def main():
         ['downloadAll', download_all],
         ['addAdmin', addAdmin],
         ["help", help_me],
+        ["hi", hi],
     ]
     #
     for command, function in admin_commands:
