@@ -17,6 +17,7 @@ def loadDataOnStartup():
     loadJobDict()
     loadSeekerDict()
 
+
 def saveDataOnShutDown():
     saveUserDict()
     saveDevTeam()
@@ -27,23 +28,30 @@ def saveDataOnShutDown():
 def isAdmin(chatId):
     return str(chatId) in dev_team
 
+
 def getSeeker(chatId):
     return seeker_dict.get(int(chatId))
+
 
 def getSeekerDict():
     return seeker_dict
 
+
 def getJobDict():
     return job_dict
+
 
 def getJob(id) -> Job:
     return job_dict.get(id)
 
+
 def getUserDict():
     return user_dict
 
+
 def getUser(chatId) -> User:
     return user_dict.get(chatId)
+
 
 def isSeekerRegistered(chatId):
     return chatId in seeker_dict.keys()
@@ -53,7 +61,7 @@ def isJobAvailableForTaking(jobId):
     return jobId in job_dict.keys() and job_dict.get(jobId).isPublish()
 
 
-def addNewJob(job : Job):
+def addNewJob(job: Job):
     print("Attempt to add new job")
     if job.id in job_dict:
         print('Job is already in the database')
@@ -96,7 +104,7 @@ def loadJobDict():
         print("Job Dict data is not found, initialize to empty")
 
 
-def addUser(user : User):
+def addUser(user: User):
     print("Attempt to add new user")
     if user.id in user_dict:
         print('User is already in the database')
@@ -129,7 +137,7 @@ def loadUserDict():
         print("User Dict data is not found, initialize to empty")
 
 
-def addSeeker(seeker : Seeker):
+def addSeeker(seeker: Seeker):
     print("Attempt to add new job seeker")
     if seeker.id in seeker_dict:
         print('Job Seeker is already in the database')
