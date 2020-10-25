@@ -90,7 +90,7 @@ def startFromChannel(update, context, payload):
                                  parse_mode=telegram.ParseMode.MARKDOWN)
         return ConversationHandler.END
 
-    keyboard = [[InlineKeyboardButton(str(jobId), callback_data=str(jobId))],
+    keyboard = [[InlineKeyboardButton('Proceed', callback_data=str(jobId))],
                 [InlineKeyboardButton("Quit", callback_data=str('quit'))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     context.bot.send_message(update.effective_chat.id,
