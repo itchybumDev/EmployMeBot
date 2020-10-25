@@ -61,15 +61,15 @@ class Seeker:
 
     def toExcelRow(self):
         return {'first_name': self.first_name,
-                'full_name': self.full_name.replace('\n', ''),
+                'full_name': self.full_name.replace('\n', '') if self.full_name != None else 'None',
                 'id': self.id,
                 'is_bot': self.is_bot,
-                'last_name': self.last_name.replace('\n', ''),
-                'name': self.name.replace('\n', ''),
-                'gender': self.gender.replace('\n', ''),
-                'education_level': self.education_level.replace('\n', ''),
-                'occupation': self.occupation.replace('\n',''),
-                'experience': self.experience.replace('\n',''),
-                'note': self.note.replace('\n',''),
+                'last_name': self.last_name.replace('\n', '') if self.last_name != None else 'None',
+                'name': self.name.replace('\n', '') if self.name != None else 'None',
+                'gender': self.gender.replace('\n', '') if self.gender != None else 'None',
+                'education_level': self.education_level.replace('\n', '') if self.education_level != None else 'None',
+                'occupation': self.occupation.replace('\n','') if self.occupation != None else 'None',
+                'experience': self.experience.replace('\n','') if self.experience != None else 'None',
+                'note': self.note.replace('\n', '') if self.note != None else 'None',
                 'created_on': self.created_on,
                 'modifiedOn': self.modifiedOn}
