@@ -4,7 +4,7 @@ Welcome to your personal Job Assitant Bot!
 
 I am Emily and I am here to assist you.
 
-Before we start, please join our Telegram channel {Chanel Name} if you are not yet a member!
+Before we start, please join our Telegram channel ChanelName if you are not yet a member!
 
 Important Notice: If you do not have a Telegram Username and have disabled forwarded messages to contain your Telegram contact in your Privacy Settings, Job Posters or Tutors will not be able to contact you on Telegram. We advise you to create a Telegram username before proceeding further steps!
 
@@ -47,7 +47,7 @@ DONE_UPDATING_JOB_TEXT = """
 
 What will happen next:
 
-Once approved by the Administrators, your job request will be published on {Chanel Name}.
+Once approved by the Administrators, your job request will be published on ChanelName.
 
 Sit tight and be patient! Once any tutor applies for your job, his/her profile will be sent to you by me (the bot) directly.
 
@@ -63,7 +63,7 @@ DONE_POSTING_JOB_TEXT = """
 
 What will happen next:
 
-Once approved by the Administrators, your job request will be published on {Chanel Name}.
+Once approved by the Administrators, your job request will be published on ChanelName.
 
 Sit tight and be patient! Once any tutor applies for your job, his/her profile will be sent to you by me (the bot) directly.
 
