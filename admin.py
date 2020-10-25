@@ -17,6 +17,12 @@ def loadDataOnStartup():
     loadJobDict()
     loadSeekerDict()
 
+def saveDataOnShutDown():
+    saveUserDict()
+    saveDevTeam()
+    saveJobDict()
+    saveSeekerDict()
+
 
 def isAdmin(chatId):
     return str(chatId) in dev_team

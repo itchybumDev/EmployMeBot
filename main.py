@@ -963,11 +963,13 @@ def main():
     updater.idle()
 
 
+
 if __name__ == '__main__':
     logger.info("Starting Bot")
     try:
         main()
     except KeyboardInterrupt:
         logger.info("Terminated using Ctrl + C")
+    ad.saveDataOnShutDown()
     logger.info("Exiting Bot")
     sys.exit()
