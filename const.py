@@ -26,7 +26,7 @@ Important Notice: If you do not have a Telegram Username and have disabled forwa
 POSTING_JOB_TEXT = """
 Posting job is fast and simple!
 
-Please do not share private information / specific location for your assignment as they will be posted on the public channel.
+Please do not share private information specific location for your assignment as they will be posted on the public channel.
 
 Press 'New Job' below to begin posting a new assignment!
 """
@@ -88,18 +88,18 @@ Thank you for using our platform to broadcast your assignment! :)
 """
 
 JOB_POSTED_TEXT = """
-Assignments Dashboard
+*--Assignments Dashboard--*
 
-Pending Approval
+*Pending Approval*
 {}
 
-Published Assignments
+*Published Assignments*
 {}
 
-Rejected Assignments
+*Rejected Assignments*
 {}
 
-Closed Assignments
+*Closed Assignments*
 {}
 
 Select each assignment below to view more details, edit assignment fields, shortlist your tutors, or close the job!
@@ -116,7 +116,7 @@ Please re-submit the job with edited values.
 """
 
 UPDATE_JOB_TEXT ="""
-Congratulations! Here is your new posting:
+*Congratulations!* Here is your new posting:
 {}
 
 Please wait for admin to review the changes
@@ -138,7 +138,7 @@ If you wish to start a new assignment posting for another subject, press /start 
 
 
 PUBLISH_JOB_POSTER_TEXT = """
-*Congratuations*, your job posting:
+*Congratulations*, your job posting:
 {}
 
 Have been *APPROVED* by admin, you will now see the posting in channel
@@ -172,7 +172,7 @@ Please edit the post again for approval, press /start again!
 
 
 QUIT_TEXT = """
-Thanks for using me
+Thanks for using Careers_Bot
 
 If you wish to start a new assignment posting for another subject, press /start anytime!
 """
@@ -272,7 +272,7 @@ What do you want to do?
 """
 
 ACCEPT_TEXT = """
-Congratulations on finding the person for the job.
+*Congratulations* on finding the person for the job.
 Your posting is now moved to Closed and will not be able to modify further
 We will notify him/her
 Please proceed to contact him/her to arrange for a call as well
@@ -282,7 +282,7 @@ You application for
 
 {}
 
-has been *ACCEPTED*'.
+has been *ACCEPTED*.
 
 Please wait for the job poster to contact you
 """
@@ -305,3 +305,8 @@ Lets keep looking.
 """
 
 JOB_NO_LONGER_THERE = 'The job is no longer there. Press /start to try again'
+
+INTERESTED_LIST_TEXT = """
+Here is/are interested applications.
+
+"""

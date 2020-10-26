@@ -129,7 +129,7 @@ class Job:
         interestedUserString = ''
         for u in self.interestedUser:
             interestedUserString += u.toString()
-        interestedUserString.replace('\n', '')
+        interestedUserString = interestedUserString.replace('\n', '')
         return {'id': self.id,
                 'subject': self.subject.replace('\n', ''),
                 'level': self.level.replace('\n', ''),
@@ -143,5 +143,5 @@ class Job:
                 'created_on': self.created_on,
                 'modified_on': self.modifiedOn,
                 'rejected_reason': self.rejected_reason if self.rejected_reason != None else 'None',
-                'assignedUser': self.assignedUser.toString() if self.assignedUser != None else 'None',
+                'assignedUser': self.assignedUser.toString().replace('\n', '') if self.assignedUser != None else 'None',
                 'interestedUser': interestedUserString}

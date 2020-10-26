@@ -258,16 +258,21 @@ def interestedList(update, context):
 
     keyboard = []
 
+    reply_text = INTERESTED_LIST_TEXT
+
     for seeker in curr_job.interestedUser:
         keyboard.append([InlineKeyboardButton('{} - {} - {}'.format(seeker.name,
                                                                     seeker.gender,
                                                                     seeker.education_level).replace('\n', ''),
                                               callback_data=str(seeker.id))])
+        reply_text += seeker.toPostingString() + '\n'
     keyboard.append([InlineKeyboardButton("Quit", callback_data=str('quit'))])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    query.edit_message_text(POSTING_JOB_TEXT, reply_markup=reply_markup)
+    query.edit_message_text(reply_text,
+                            parse_mode=telegram.ParseMode.MARKDOWN,
+                            reply_markup=reply_markup)
     return CHOOSING_SEEKER
 
 
@@ -591,7 +596,7 @@ def jobPosted(update, context):
             ','.join(publishList),
             ','.join(rejectedList),
             ','.join(closedList),
-        ), reply_markup=reply_markup)
+        ), parse_mode=telegram.ParseMode.MARKDOWN, reply_markup=reply_markup)
         #   Return Stage to Handle edit
         return CHOOSING_EDIT_CLOSE_JOB
     else:
@@ -672,16 +677,15 @@ def addSeeker(update, context):
 def donePostingInfo(update, context):
     query = update.callback_query
     query.answer()
-    send_edit_text(query, DONE_SEEKER_INFO_TEXT)
     ad.addSeeker(context.user_data['jobSeekerInfo'])
 
     keyboard = [
-        [InlineKeyboardButton("Tutor", callback_data=str('tutor'))],
+        [InlineKeyboardButton("Show me jobs", callback_data=str('tutor'))],
         [InlineKeyboardButton("Quit", callback_data=str('quit'))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     # Send message with text and appended InlineKeyboard
-    update.message.reply_text(
+    query.edit_message_text(
         DONE_SEEKER_INFO_TEXT,
         parse_mode=ParseMode.MARKDOWN,
         reply_markup=reply_markup
