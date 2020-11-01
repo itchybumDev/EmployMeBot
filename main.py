@@ -505,10 +505,10 @@ def createSeeker(info, chatId) -> Job:
     # find note:
     result.append(info[info.index(terms[-1]) + len(terms[-1]):])
     user = ad.getUser(chatId)
-    # (first_name, full_name, id, is_bot, last_name, name, gender, education_level, occupation, experience, note)
-    if len(result) == 6:
+    # (first_name, full_name, id, is_bot, last_name, name, gender, education_level, occupation, experience, hp, note)
+    if len(result) == 7:
         return Seeker(user.first_name, user.full_name, user.id, user.is_bot, user.last_name, result[0],
-                      result[1], result[2], result[3], result[4], result[5])
+                      result[1], result[2], result[3], result[4], result[5], result[6])
     else:
         print('Something went wrong in added seeker')
         return None
