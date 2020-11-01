@@ -213,6 +213,7 @@ Please send me your information by replacing those insert places:
 *Education Level* : [Insert High School/ Bachelor/ Master/ PhD]
 *Occupation* : [Insert Engineer/ Doctor/ etc]
 *Experience* : [Insert graduate/ 2 yrs/ etc]
+*Contact Number* : [Insert HP number]
 *Additional Note* : [Insert N/A]
 
 For example, something like this:
@@ -225,6 +226,7 @@ NEW_SEEKER_INFO_TEXT_SAMPLE = """
 *Education Level* : [AI Bot]
 *Occupation* : [Personal Assistant]
 *Experience* : [2 yrs]
+*Contact Number* : [1234 6789]
 *Additional Note* : [I am not really a real person]
 """
 
