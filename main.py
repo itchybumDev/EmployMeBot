@@ -454,7 +454,12 @@ def doneUpdatingJob(update, context):
 def addJob(update, context):
     inputJob = update.message.text_markdown
     if not validateJob(inputJob):
-        send_plain_text(update, context, "Your job posting missing certain information please try again")
+        keyboard = [[InlineKeyboardButton("Quit", callback_data=str('quit'))]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        context.bot.send_message(update.effective_chat.id,
+                                 text="Your job posting missing certain information please try again",
+                                 parse_mode=telegram.ParseMode.MARKDOWN,
+                                 reply_markup=reply_markup)
         return ADD_JOB
     new_job = createJob(inputJob, update.effective_chat.id)
     print('New job created \n' + new_job.toString())
@@ -615,7 +620,7 @@ def jobPosted(update, context):
 def quit(update, context):
     query = update.callback_query
     query.answer()
-    send_edit_text(query, QUIT_TEXT)
+    query.edit_message_text(QUIT_TEXT)
     return ConversationHandler.END
 
 
@@ -893,7 +898,7 @@ def hi(update, context):
 
 def main():
     # ad.startAdmin()
-    updater = Updater(config['telegram']['token_dev'], use_context=True)
+    updater = Updater(config['telegram']['token_dev_testyoumebot'], use_context=True)
     dp = updater.dispatcher
 
     ad.loadDataOnStartup()
