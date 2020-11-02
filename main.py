@@ -898,7 +898,7 @@ def hi(update, context):
 
 def main():
     # ad.startAdmin()
-    updater = Updater(config['telegram']['token_dev_testyoumebot'], use_context=True)
+    updater = Updater(config['telegram']['token_dev'], use_context=True)
     dp = updater.dispatcher
 
     ad.loadDataOnStartup()
