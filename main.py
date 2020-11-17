@@ -63,15 +63,14 @@ def start(update, context):
                     update.effective_user.last_name,
                     update.effective_user.name)
     ad.addUser(currUser)
-
-    keyboard = [
-        [InlineKeyboardButton("Job Poster", callback_data=str('poster'))],
-        [InlineKeyboardButton("Tutor", callback_data=str('tutor'))],
-        [InlineKeyboardButton("Quit", callback_data=str('quit'))]
-    ]
+    keyboard = []
 
     if ad.isAdmin(update.effective_chat.id):
         keyboard.append([InlineKeyboardButton("Admin", callback_data=str('admin'))])
+
+    keyboard.append([InlineKeyboardButton("Job Poster", callback_data=str('poster'))])
+    keyboard.append([InlineKeyboardButton("Tutor", callback_data=str('tutor'))])
+    keyboard.append( [InlineKeyboardButton("Quit", callback_data=str('quit'))])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     # Send message with text and appended InlineKeyboard
@@ -436,7 +435,7 @@ def reSubmitEditJob(update, context):
         return UPDATE_JOB
     else:
         send_edit_text(query,
-                       text='The job is no longer there. Press /start to tsend_plain_textry again')
+                       text='The job is no longer there. Press /start to try again')
         return ConversationHandler.END
 
 
@@ -953,7 +952,7 @@ def hi(update, context):
 
 def main():
     # ad.startAdmin()
-    updater = Updater(config['telegram']['token_dev'], use_context=True)
+    updater = Updater(config['telegram']['token_dev_testyoumebot'], use_context=True)
     dp = updater.dispatcher
 
     ad.loadDataOnStartup()
