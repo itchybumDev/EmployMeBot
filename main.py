@@ -69,6 +69,10 @@ def start(update, context):
         [InlineKeyboardButton("Tutor", callback_data=str('tutor'))],
         [InlineKeyboardButton("Quit", callback_data=str('quit'))]
     ]
+
+    if ad.isAdmin(update.effective_chat.id):
+        keyboard.append([InlineKeyboardButton("Admin", callback_data=str('admin'))])
+
     reply_markup = InlineKeyboardMarkup(keyboard)
     # Send message with text and appended InlineKeyboard
     update.message.reply_text(
@@ -78,7 +82,6 @@ def start(update, context):
     )
     # Tell ConversationHandler that we're in state `FIRST` now
     return FIRST
-
 
 @logInline
 def startFromChannel(update, context, payload):
@@ -563,6 +566,58 @@ def validateJob(inputJob):
 
 
 @logInline
+def admin_accept_reject_job(update, context):
+    chatId = update.effective_chat.id
+    query = update.callback_query
+    query.answer()
+
+    pendingList = []
+    publishList = []
+    rejectedList = []
+    closedList = []
+
+    for value in ad.getJobDict().values():
+        if value.created_by == chatId or ad.isAdmin(chatId):
+            if value.stage == Job.stages[0]:
+                pendingList.append(value.id)
+            elif value.stage == Job.stages[1]:
+                publishList.append(value.id)
+            elif value.stage == Job.stages[2]:
+                rejectedList.append(value.id)
+            elif value.stage == Job.stages[3]:
+                closedList.append(value.id)
+
+    if len(pendingList) != 0 or len(publishList) != 0 or len(rejectedList) != 0:
+        keyboard = []
+        for i in pendingList:
+            keyboard.append([InlineKeyboardButton('Pending - ' + i, callback_data=str(i))])
+        for i in publishList:
+            keyboard.append([InlineKeyboardButton('Published - ' + i, callback_data=str(i))])
+        for i in rejectedList:
+            keyboard.append([InlineKeyboardButton('Rejected - ' + i, callback_data=str(i))])
+        keyboard.append([InlineKeyboardButton("Quit", callback_data=str('quit'))])
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        query.edit_message_text(text=JOB_POSTED_TEXT.format(
+            ','.join(pendingList),
+            ','.join(publishList),
+            ','.join(rejectedList),
+            ','.join(closedList),
+        ), parse_mode=telegram.ParseMode.MARKDOWN, reply_markup=reply_markup)
+        #   Return Stage to Handle edit
+        return CHOOSING_EDIT_CLOSE_JOB
+    else:
+        send_edit_text(query,
+                       text=JOB_POSTED_TEXT.format(
+                           ','.join(pendingList),
+                           ','.join(publishList),
+                           ','.join(rejectedList),
+                           ','.join(closedList),
+                       ))
+        send_plain_text(update, context, JOB_POSTED_EMPTY_TEXT)
+        return ConversationHandler.END
+
+@logInline
 @run_async
 def jobPosted(update, context):
     chatId = update.effective_chat.id
@@ -911,7 +966,8 @@ def main():
         states={
             FIRST: [CallbackQueryHandler(postingJob, pattern='^poster$'),
                     CallbackQueryHandler(quit, pattern='^quit$'),
-                    CallbackQueryHandler(tutor, pattern='^tutor$')],
+                    CallbackQueryHandler(tutor, pattern='^tutor$'),
+                    CallbackQueryHandler(admin_accept_reject_job, pattern='^admin$')],
             POSTING: [CallbackQueryHandler(newJob, pattern='^newjob$'),
                       CallbackQueryHandler(quit, pattern='^quit$'),
                       CallbackQueryHandler(jobPosted, pattern='^jobposted$')],
