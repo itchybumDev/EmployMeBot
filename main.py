@@ -487,7 +487,10 @@ def addJob(update, context):
 def deleteMessage(update, context, previous = 0):
     currNumb = update.message.message_id
     for i in range(currNumb, previous * -1 + currNumb - 1, -1):
-        context.bot.delete_message(chat_id=update.message.chat.id, message_id=i)
+        try:
+            context.bot.delete_message(chat_id=update.message.chat.id, message_id=i)
+        except:
+            logger.error('Cannot delete message for chat')
 
 @logInline
 def donePostingJob(update, context):
