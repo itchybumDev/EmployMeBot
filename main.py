@@ -28,8 +28,7 @@ config.read('config.ini')
 FIRST, POSTING, REGISTERING_JOB, ADD_SEEKER, SUBMIT_JOB_INTEREST, CHOOSING_SEEKER, ADD_JOB, CHOOSING_EDIT_CLOSE_JOB, UPDATE_JOB, \
 UPDATE_STAGE, REJECTION_REASON, NOTIFY_DECISION = range(12)
 
-
-#TuitionBotSg
+# TuitionBotSg
 channel = [-1001215957440]
 
 
@@ -70,7 +69,7 @@ def start(update, context):
 
     keyboard.append([InlineKeyboardButton("Job Poster", callback_data=str('poster'))])
     keyboard.append([InlineKeyboardButton("Tutor", callback_data=str('tutor'))])
-    keyboard.append( [InlineKeyboardButton("Quit", callback_data=str('quit'))])
+    keyboard.append([InlineKeyboardButton("Quit", callback_data=str('quit'))])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     # Send message with text and appended InlineKeyboard
@@ -81,6 +80,7 @@ def start(update, context):
     )
     # Tell ConversationHandler that we're in state `FIRST` now
     return FIRST
+
 
 @logInline
 def startFromChannel(update, context, payload):
@@ -96,7 +96,8 @@ def startFromChannel(update, context, payload):
                 [InlineKeyboardButton("Quit", callback_data=str('quit'))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     context.bot.send_message(update.effective_chat.id,
-                             text=START_FROM_CHANNEL_TEXT.format(update.effective_user.full_name, ad.getJob(jobId).toPostingString()),
+                             text=START_FROM_CHANNEL_TEXT.format(update.effective_user.full_name,
+                                                                 ad.getJob(jobId).toPostingString()),
                              parse_mode=telegram.ParseMode.MARKDOWN,
                              reply_markup=reply_markup)
     return REGISTERING_JOB
@@ -297,12 +298,11 @@ def choosingSeeker(update, context):
     query.edit_message_text(CHOOSING_SEEKER_TEXT.format(seeker.toPostingString()),
                             parse_mode=telegram.ParseMode.MARKDOWN,
                             reply_markup=reply_markup)
-    # return NOTIFY_DECISION
-    return In
+    return NOTIFY_DECISION
 
 
 def accept(update, context):
-    #context.user_data['editJob']
+    # context.user_data['editJob']
     query = update.callback_query
     query.answer()
     seeker = context.user_data['selectedSeeker']
@@ -317,7 +317,7 @@ def accept(update, context):
 
 
 def reject(update, context):
-    #context.user_data['editJob']
+    # context.user_data['editJob']
     query = update.callback_query
     query.answer()
     seeker = context.user_data['selectedSeeker']
@@ -365,18 +365,18 @@ def publishPosting(update, context):
     return ConversationHandler.END
 
 
-def publishToChannel(currJob : Job, context):
+def publishToChannel(currJob: Job, context):
     jobId = currJob.id
-    url = helpers.create_deep_linked_url(context.bot.get_me().username, ''+str(jobId))
+    url = helpers.create_deep_linked_url(context.bot.get_me().username, '' + str(jobId))
     keyboard = [
         [InlineKeyboardButton("Register for job", url=url)],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     for c in channel:
         context.bot.send_message(c,
-                             text=CHANNEL_NEW_JOB_POSTED_TEXT.format(currJob.toPostingString()),
-                             parse_mode=telegram.ParseMode.MARKDOWN,
-                             reply_markup=reply_markup)
+                                 text=CHANNEL_NEW_JOB_POSTED_TEXT.format(currJob.toPostingString()),
+                                 parse_mode=telegram.ParseMode.MARKDOWN,
+                                 reply_markup=reply_markup)
 
 
 @logInline
@@ -484,13 +484,15 @@ def addJob(update, context):
                              reply_markup=reply_markup)
     return ADD_JOB
 
-def deleteMessage(update, context, previous = 0):
+
+def deleteMessage(update, context, previous=0):
     currNumb = update.message.message_id
     for i in range(currNumb, previous * -1 + currNumb - 1, -1):
         try:
             context.bot.delete_message(chat_id=update.message.chat.id, message_id=i)
         except:
             logger.error('Cannot delete message for chat')
+
 
 @logInline
 def donePostingJob(update, context):
@@ -627,6 +629,7 @@ def admin_accept_reject_job(update, context):
                        ))
         send_plain_text(update, context, JOB_POSTED_EMPTY_TEXT)
         return ConversationHandler.END
+
 
 @logInline
 @run_async
@@ -775,9 +778,9 @@ def resubmitInfo(update, context):
     keyboard = [[InlineKeyboardButton('Quit', callback_data=str('quit'))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    name = update.effective_user.full_name or\
-           update.effective_user.name or\
-           update.effective_user.first_name or\
+    name = update.effective_user.full_name or \
+           update.effective_user.name or \
+           update.effective_user.first_name or \
            update.effective_user.last_name
 
     query.edit_message_text(text='Here is the sample\n\n' +
@@ -945,18 +948,20 @@ def download_all(update, context):
     # with open("./db/userData.pickle", 'rb') as f:
     #     context.bot.send_document(chat_id=update.effective_chat.id, document=f, filename='userData.pickle')
 
+
 @authorize
 @run_async
 def canIBeAdmin(update, context):
     user = ad.getUser(update.effective_user.id)
     notifyAdmin(user.toString() + " want to admin", context)
 
+
 @authorize
 @run_async
 def addAdmin(update, context):
     newAdminId = context.args[0]
     ad.addDevTeam(newAdminId)
-    send_plain_text(update, context,"Added Dev: {}".format(ad.getUser(newAdminId)))
+    send_plain_text(update, context, "Added Dev: {}".format(ad.getUser(newAdminId)))
 
 
 @run_async
@@ -1003,9 +1008,8 @@ def main():
                          CallbackQueryHandler(doneUpdatingJob, pattern='^doneupdatingjob$')],
             REJECTION_REASON: [MessageHandler(Filters.text, rejectionReason)],
             REGISTERING_JOB: [CallbackQueryHandler(registeringJob)],
-            CHOOSING_SEEKER: [CallbackQueryHandler(choosingSeeker),
-                              CallbackQueryHandler(interestedList, pattern='^back$'),
-                              CallbackQueryHandler(quit, pattern='^quit$')],
+            CHOOSING_SEEKER: [CallbackQueryHandler(quit, pattern='^quit$'),
+                              CallbackQueryHandler(choosingSeeker)],
             ADD_SEEKER: [MessageHandler(Filters.text, addSeeker),
                          CallbackQueryHandler(resubmitInfo, pattern='^resubmitinfo$'),
                          CallbackQueryHandler(donePostingInfo, pattern='^donepostinginfo$'),
@@ -1014,6 +1018,7 @@ def main():
                                   CallbackQueryHandler(resubmitInfo, pattern='^resubmitinfo'),
                                   CallbackQueryHandler(quit, pattern='^quit$')],
             NOTIFY_DECISION: [CallbackQueryHandler(accept, pattern='^accept$'),
+                              CallbackQueryHandler(interestedList, pattern='^back$'),
                               CallbackQueryHandler(reject, pattern='^reject$'),
                               CallbackQueryHandler(quit, pattern='^quit$')]
             #        CallbackQueryHandler(abandon, pattern='ABANDON*')],
