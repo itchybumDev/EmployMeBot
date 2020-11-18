@@ -270,7 +270,7 @@ Application from
 
 {}
 
-What do you want to do?
+Please reach out through Contact Number
 """
 
 ACCEPT_TEXT = """
@@ -311,4 +311,8 @@ JOB_NO_LONGER_THERE = 'The job is no longer there. Press /start to try again'
 INTERESTED_LIST_TEXT = """
 Here is/are interested applications.
 
+"""
+
+TOO_MANY_SEEKER_INTERESTED = """
+This job posting is no longer accept applications. Press /start to find another job
 """

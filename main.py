@@ -287,15 +287,18 @@ def choosingSeeker(update, context):
     seeker = ad.getSeeker(selection)
     context.user_data['selectedSeeker'] = seeker
 
-    keyboard = [[InlineKeyboardButton('Accept', callback_data=str('accept')),
-                 InlineKeyboardButton('Reject', callback_data=str('reject'))],
-                [InlineKeyboardButton("Quit", callback_data=str('quit'))]]
+    # keyboard = [[InlineKeyboardButton('Accept', callback_data=str('accept')),
+    #              InlineKeyboardButton('Reject', callback_data=str('reject'))],
+    #             [InlineKeyboardButton("Quit", callback_data=str('quit'))]]
+
+    keyboard = [[InlineKeyboardButton("Back", callback_data=str('back'))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     query.edit_message_text(CHOOSING_SEEKER_TEXT.format(seeker.toPostingString()),
                             parse_mode=telegram.ParseMode.MARKDOWN,
                             reply_markup=reply_markup)
-    return NOTIFY_DECISION
+    # return NOTIFY_DECISION
+    return In
 
 
 def accept(update, context):
@@ -401,6 +404,7 @@ def rejectionReason(update, context):
 @logInline
 def updateJob(update, context):
     inputJob = update.message.text_markdown
+    deleteMessage(update, context, 2)
     if not validateJob(inputJob):
         send_plain_text(update, context, "Your job posting missing certain information please try again")
         return UPDATE_JOB
@@ -455,6 +459,7 @@ def doneUpdatingJob(update, context):
 @logInline
 def addJob(update, context):
     inputJob = update.message.text_markdown
+    deleteMessage(update, context, 3)
     if not validateJob(inputJob):
         keyboard = [[InlineKeyboardButton("Quit", callback_data=str('quit'))]]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -479,6 +484,10 @@ def addJob(update, context):
                              reply_markup=reply_markup)
     return ADD_JOB
 
+def deleteMessage(update, context, previous = 0):
+    currNumb = update.message.message_id
+    for i in range(currNumb, previous * -1 + currNumb - 1, -1):
+        context.bot.delete_message(chat_id=update.message.chat.id, message_id=i)
 
 @logInline
 def donePostingJob(update, context):
@@ -685,7 +694,7 @@ def tutor(update, context):
     publishList = []
 
     for value in ad.getJobDict().values():
-        if value.stage == Job.stages[1]:
+        if value.stage == Job.stages[1] and len(value.interestedUser) < 10:
             publishList.append(value.id)
 
     if len(publishList) != 0:
@@ -708,6 +717,7 @@ def tutor(update, context):
 @logInline
 def addSeeker(update, context):
     info = update.message.text_markdown
+    deleteMessage(update, context, 1)
     if not validateSeeker(info):
         send_plain_text(update, context, "Your personal information is missing certain fields please try again")
         return ADD_SEEKER
@@ -790,7 +800,7 @@ def registeringJob(update, context):
            update.effective_user.last_name
 
     if not ad.isSeekerRegistered(chatId):
-        send_plain_text(update, context, SEEKER_NOT_REGISTERED_TEXT.format(update.effective_user.full_name))
+        send_edit_text(query, SEEKER_NOT_REGISTERED_TEXT.format(update.effective_user.full_name))
         keyboard = [[InlineKeyboardButton('Quit', callback_data=str('quit'))]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         context.bot.send_message(update.effective_chat.id,
@@ -844,14 +854,16 @@ def submitJobInterest(update, context):
         send_edit_text(query,
                        text=JOB_NO_LONGER_THERE)
         return ConversationHandler.END
-
-    curr_job.setInterestedUser(seeker)
-    # notify job poster
-    send_edit_text(query, SEEKER_SUBMIT_INTEREST_TEXT.format(curr_job.toPostingString()))
-    context.bot.send_message(curr_job.created_by,
-                             text=SEEKER_SUBMIT_INTEREST_POSTER_NOTIFY_TEXT.format(seeker.toPostingString(),
-                                                                                   curr_job.toPostingString()),
-                             parse_mode=telegram.ParseMode.MARKDOWN)
+    if len(curr_job.interestedUser) >= 10:
+        send_edit_text(query, TOO_MANY_SEEKER_INTERESTED.format(curr_job.toPostingString()))
+    else:
+        curr_job.setInterestedUser(seeker)
+        # notify job poster
+        send_edit_text(query, SEEKER_SUBMIT_INTEREST_TEXT.format(curr_job.toPostingString()))
+        context.bot.send_message(curr_job.created_by,
+                                 text=SEEKER_SUBMIT_INTEREST_POSTER_NOTIFY_TEXT.format(seeker.toPostingString(),
+                                                                                       curr_job.toPostingString()),
+                                 parse_mode=telegram.ParseMode.MARKDOWN)
 
     return ConversationHandler.END
 
@@ -989,6 +1001,7 @@ def main():
             REJECTION_REASON: [MessageHandler(Filters.text, rejectionReason)],
             REGISTERING_JOB: [CallbackQueryHandler(registeringJob)],
             CHOOSING_SEEKER: [CallbackQueryHandler(choosingSeeker),
+                              CallbackQueryHandler(interestedList, pattern='^back$'),
                               CallbackQueryHandler(quit, pattern='^quit$')],
             ADD_SEEKER: [MessageHandler(Filters.text, addSeeker),
                          CallbackQueryHandler(resubmitInfo, pattern='^resubmitinfo$'),
